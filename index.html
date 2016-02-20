@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html ng-app="store">
+<!-- adding ng-app="store" created Uncaught Error: [$injector:modulerr] error... removing "=store" fixed it is this an angular 1.5.0 issue? same happening in angular 1.2.x -->
+<!-- seems the async defer property in a script tag causes the issue. Research why -->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title></title>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+
+
+
+</head>
+<!-- attach the controller, in [controller name] as [alias] format -->
+<body ng-controller="StoreController as store">
+  <p>{{"hello " + "you"}}</p>
+  <!-- <div ng-show="!store.product.soldOut"> -->
+  <!-- expression: hide div when product is sold out -->
+  <!-- <div ng-hide="store.product.soldOut">
+    <h1>{{store.product.name}}</h1>
+    <h2>${{store.product.price}}</h2>
+    <p>{{store.product.description}}</p> -->
+    <!-- this is a directive: display when expression - canPurchase: true -->
+    <!-- <button ng-show="store.product.canPurchase">Add to Cart</button>
+  </div>
+ -->
+ <!-- using an array of products... repeat for each product -->
+ <div ng-repeat="product in store.products">
+    <h1>{{product.name}}</h1>
+    <h2>${{product.price}}</h2>
+    <p>{{product.description}}</p>
+    <button ng-show="product.canPurchase">Add to Cart</button>
+  </div>
+
+  <!-- Latest compiled and minified JavaScript -->
+
+
+    <!-- Latest compiled and minified JavaScript -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
+<!--   removing async defer from script somehow makes this work. Research what async defer does in a script tag. This error has happened in other apps for the same reason -->
+  <script src="app.js" type="text/javascript" charset="utf-8"></script>
+</body>
+</html>
+
+
+<!-- <html ng-app="gemStore">
+  <head>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </head>
+  <body ng-controller="StoreController as store">
+    <div class="product row">
+      <h3>
+        {{store.product.name}}
+        <em class="pull-right">{{store.product.price}}</em>
+      </h3>
+    </div>
+  </body>
+</html> -->
+
+
+<!-- directives - html annotations that trigger JS behaviors
+modules - where our application components live
+controllers - where we add application behavior
+expressions - how values get displayed within the page -->
+
+
+<!-- <!DOCTYPE html>
+<html ng-app="gemStore">
+  <head>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </head>
+  <body class="container" ng-controller="StoreController as store">
+    <div class="product row" ng-hide="store.product.soldOut">
+      <h3>
+        {{store.product.name}}
+        <em class="pull-right">${{store.product.price}}</em>
+      </h3>
+      <button ng-show="store.product.canPurchase">Add to Cart</button>
+    </div>
+  </body>
+</html> -->
+
+
+
+<!-- <!DOCTYPE html>
+<html ng-app="gemStore">
+  <head>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+    <script type="text/javascript" src="angular.min.js"></script>
+    <script type="text/javascript" src="app.js"></script>
+  </head>
+  <body class="container" ng-controller="StoreController as store">
+    <div class="product row" ng-repeat="product in store.products">
+      <h3>
+        {{product.name}}
+        <em class="pull-right">${{product.price}}</em>
+      </h3>
+    </div>
+  </body>
+</html> -->
