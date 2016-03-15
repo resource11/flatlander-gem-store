@@ -13,101 +13,88 @@
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 
-
-
+  <link rel="stylesheet" type="text/css" href="style.css">
 
 </head>
 <!-- attach the controller, in [controller name] as [alias] format -->
 <body ng-controller="StoreController as store">
-  <h1>Hello, {{name}}!</h1>
-  <ul class="list-group">
-    <li class="list-group-item" ng-repeat="product in store.products">
-      <h3>
-        {{product.name}}
-        <!-- Pipe the price into localized currency format -->
-        <!-- syntax: {{data | filter:options}} -->
-        <!-- examples:
-        date: {{'1388123412323' | date: 'MM/dd/yyyy @ h:mma'}} returns 12/27/2013 @ 1250am
-        uppercase: {{'octagon gem' | uppercase}} returns OCTAGON GEM
-        limitTo: {{'My Description' | limitTo:8}} returns: My Descr
-        limit items in array:
-        <li ng-repeat="product in store.products | limitTo:3"></li>
-        orderBy descending price:
-        <li ng-repeat="product in store.products | orderBy:'-price'"></li>
-        orderBy ascending price:
-        <li ng-repeat="product in store.products | orderBy:'price'"></li>
-        to display first image in array {{product.images[0].full}}
-        don't do this. The browser will try to load the image before the Expression evaluates
-        <img src="{{product.images[0].full}}">
-        Use ng-src directive to fix this. -->
-        <em class="pull-right">{{product.price | currency}}</em>
-        <img ng-src="{{product.images[0].full}}">
-      </h3>
-    </li>
-  </ul>
-  <div ng-repeat="product in store.products">
-    <h1>Hello, {{name}}!</h1>
-    <h2>${{product.price}}</h2>
-    <p>{{product.description}}</p>
-    <button ng-show="product.canPurchase">Add to Cart</button>
+  <header>
+      <h1 class="text-center">Welcome, {{name}} to Flatlander Crafted Gems</h1>
+      <h2 class="text-center">– an Angular store –</h2>
+   </header>
+  <div class="list-group">
+    <div class="list-group-item" ng-repeat="product in store.products">
+      <h3>{{product.name}} <em class="pull-right">{{product.price | currency}}</em></h3>
+
+      <div ng-controller="GalleryController as gallery"  ng-show="product.images.length">
+        <div class="img-wrap">
+          <img ng-src="{{product.images[0].full}}" />
+        </div>
+        <ul class="img-thumbnails clearfix">
+          <li class="small-image pull-left thumbnail" ng-repeat="image in product.images">
+            <img ng-src="{{image}}" />
+          </li>
+        </ul>
+      </div>
+
+        <section ng-controller="PanelController as panel">
+          <ul class="nav nav-pills">
+            <li ng-class="{active:panel.isSelected(1)}"><a href="" ng-click="panel.selectPanel(1)">Description</a></li>
+            <li ng-class="{active:panel.isSelected(2)}"><a href="" ng-click="panel.selectPanel(2)">Specifications</a></li>
+            <li ng-class="{active:panel.isSelected(3)}"><a href="" ng-click="panel.selectPanel(3)">Reviews</a></li>
+          </ul>
+
+          <!-- show if the tab === the value -->
+          <div ng-show="panel.isSelected(1)">
+            <h4>Description</h4>
+            <p>{{product.description}}</p>
+          </div>
+          <div ng-show="panel.isSelected(2)">
+            <h4>Specifications</h4>
+            <blockquote>None yet</blockquote>
+          </div>
+          <div ng-show="panel.isSelected(3)">
+            <ul class="list-unstyled">
+              <li ng-repeat="review in product.reviews">
+                <blockquote>
+                  <strong>{{review.stars}} Stars</strong>
+                  {{review.body}}
+                  <cite class="clearfix">—{{review.author}} on {{review.createdOn | date}}</cite>
+                </blockquote>
+              </li>
+            </ul>
+            <!--  Review Form -->
+            <form name="reviewForm" ng-controller="ReviewController as reviewCtrl" ng-submit="reviewForm.$valid && reviewCtrl.addReview(product)" novalidate>
+              <!--  Live Preview -->
+              <blockquote>
+                <strong>{{reviewCtrl.review.stars}} Stars</strong>
+                {{reviewCtrl.review.body}}
+                <cite class="clearfix">—{{reviewCtrl.review.author}}</cite>
+              </blockquote>
+
+              <!--  Review Form -->
+              <h4>Submit a Review</h4>
+              <fieldset class="form-group">
+                <select ng-model="reviewCtrl.review.stars" class="form-control" ng-options="stars for stars in [5,4,3,2,1]"  title="Stars" required>
+                  <option value="">Rate the Product</option>
+                </select>
+              </fieldset>
+              <fieldset class="form-group">
+                <textarea ng-model="reviewCtrl.review.body" class="form-control" placeholder="Write a short review of the product..." title="Review" required></textarea>
+              </fieldset>
+              <fieldset class="form-group">
+                <input ng-model="reviewCtrl.review.author" type="email" class="form-control" placeholder="jimmyDean@example.org" title="Email" required/>
+              </fieldset>
+              <!-- test for validation -->
+              <div>Review form is {{reviewForm.$valid}}</div>
+              <fieldset class="form-group">
+                <input type="submit" class="btn btn-primary pull-right" value="Submit Review" />
+              </fieldset>
+            </form>
+          </div>
+        </section>
+    </div>
   </div>
-
-
-  <!-- ng-init allows us to evaluate an expression in the current scope -->
-  <!-- we'll refactor this into a panel controller next -->
- <!--  <section ng-init="tab = 1">
-    <ul class="nav nav-pills"> -->
-    <!-- use ng-click Directive that takes an Expression to evaluate. Assign a value to the tab. This is 2-way data binding, meaning the expression is reevaluated when the property changes -->
-      <!-- toggle on the active class to the li if current tab is selected -->
-      <!-- <li ng-class="{active:tab === 1}"><a href ng-click="tab = 1">Description</a></li>
-      <li ng-class="{active:tab === 2}"><a href ng-click="tab = 2">Specifications</a></li>
-      <li ng-class="{active:tab === 3}"><a href ng-click="tab = 3">Reviews</a></li>
-    </ul> -->
-    <!-- this is the tab Expression -->
-    <!-- {{tab}} -->
-    <!-- show if the tab === the value -->
-<!--     <div class="panel" ng-show="tab === 1">
-      <h4>Description</h4>
-      <p>{{product.description}}</p>
-    </div>
-    <div class="panel" ng-show="tab === 2">
-      <h4>Specifications</h4>
-      <blockquote>None yet</blockquote>
-    </div>
-    <div class="panel" ng-show="tab === 3">
-      <h4>Reviews</h4>
-      <blockquote>None yet</blockquote>
-    </div>
-  </section> -->
-
-
-  <!-- ng-init is great for prototyping purposes. Pulling that out now, refactoring into a panel controller -->
-<!--   PanelCongroller as panel (the alias of PanelController) -->
-  <section ng-controller="PanelController as panel">
-    <ul class="nav nav-pills">
-    <!-- use ng-click Directive that takes an Expression to evaluate. Assign a value to the tab. This is 2-way data binding, meaning the expression is reevaluated when the property changes -->
-      <!-- toggle on the active class to the li if current tab is selected -->
-      <li ng-class="{active:panel.isSelected(1)}"><a href ng-click="panel.selectTab(1)">Description</a></li>
-      <li ng-class="{active:panel.isSelected(2)}"><a href ng-click="panel.selectTab(2)">Specifications</a></li>
-      <li ng-class="{active:panel.isSelected(3)}"><a href ng-click="panel.selectTab(3)">Reviews</a></li>
-    </ul>
-    <!-- this is the tab Expression -->
-    {{tab}}
-    <!-- show if the tab === the value -->
-    <div class="panel" ng-show="panel.isSelected(1)">
-      <h4>Description</h4>
-      <p>{{product.description}}</p>
-    </div>
-    <div class="panel" ng-show="panel.isSelected(2)">
-      <h4>Specifications</h4>
-      <blockquote>None yet</blockquote>
-    </div>
-    <div class="panel" ng-show="panel.isSelected(3)">
-      <h4>Reviews</h4>
-      <blockquote>None yet</blockquote>
-    </div>
-  </section>
-
 
 
   <!-- Latest compiled and minified JavaScript -->
@@ -117,178 +104,11 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.29/angular.min.js"></script>
-<!--   removing async defer from script somehow makes this work. Research what async defer does in a script tag. This error has happened in other apps for the same reason -->
   <script src="app.js" type="text/javascript" charset="utf-8"></script>
 </body>
 </html>
 
 
 
-<!-- <!DOCTYPE html>
-<html ng-app="gemStore">
-  <head>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
-    <script type="text/javascript" src="angular.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-  </head>
-  <body ng-controller="StoreController as store"> -->
-    <!--  Products Container  -->
-  <!--   <div class="list-group"> -->
-      <!--  Product Container  -->
-<!--       <div class="list-group-item" ng-repeat="product in store.products">
-        <h3>
-          {{product.name}}
-          <em class="pull-right">{{product.price | currency}}</em>
-        </h3> -->
-        <!-- Image Gallery  -->
-<!--         <div class="gallery">
-          <img ng-src="{{product.images[0]}}" />
-        </div>
-      </div>
-    </div>
-  </body>
-</html> -->
 
 
-
-
-
-<!-- <!DOCTYPE html>
-<html ng-app="gemStore">
-  <head>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
-    <script type="text/javascript" src="angular.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-  </head>
-  <body ng-controller="StoreController as store"> -->
-    <!--  Products Container  -->
-<!--     <div class="list-group"> -->
-      <!--  Product Container  -->
-<!--       <div class="list-group-item" ng-repeat="product in store.products">
-        <h3>
-          {{product.name}}
-          <em class="pull-right">{{product.price | currency}}</em>
-        </h3> -->
-
-        <!-- Image Gallery  -->
-        <!-- <div class="gallery" ng-show="product.images.length">
-          <img class="img img-circle img-thumbnail center-block" ng-src="{{product.images[0]}}" />
-          <ul class="clearfix">
-            <li class="small-image pull-left thumbnail" ng-repeat="image in product.images"> <img ng-src="{{image}}" /> </li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </body>
-</html> -->
-
-
-
-
-<!-- <!DOCTYPE html>
-<html ng-app="gemStore">
-  <head>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
-    <script type="text/javascript" src="angular.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-  </head>
-  <body class="list-group" ng-controller="StoreController as store">
-    <header>
-      <h1 class="text-center">Flatlander Crafted Gems</h1>
-      <h2 class="text-center">– an Angular store –</h2>
-    </header>
-    <div class="list-group-item" ng-repeat="product in store.products">
-      <h3>
-        {{product.name}}
-        <em class="pull-right">{{product.price | currency}}</em>
-      </h3>
-      <section ng-show="product.images.length">
-        <img ng-src="{{product.images[0]}}" />
-        <ul class="list-inline thumbs">
-          <li class="thumbnail" ng-repeat="image in product.images">
-            <img ng-src="{{image}}" />
-          </li>
-        </ul>
-      </section>
-
-      <section class="tab" ng-controller="TabController as tab">
-        <ul class="nav nav-pills">
-          <li ng-class="{active:tab.isSet(1)}">
-            <a href ng-click="tab.setTab(1)">Description</a></li>
-          <li ng-class="{active:tab.isSet(2)}">
-            <a href ng-click="tab.setTab(2)">Specs</a></li>
-          <li ng-class="{active:tab.isSet(3)}">
-            <a href ng-click="tab.setTab(3)">Reviews</a></li>
-        </ul>
-        <div ng-show="tab.isSet(1)">
-          <h4>Description</h4>
-          <blockquote>{{product.description}}</blockquote>
-        </div>
-        <div ng-show="tab.isSet(2)">
-          <h4>Specs</h4>
-          <blockquote>Shine: {{product.shine}}</blockquote>
-        </div>
-        <div ng-show="tab.isSet(3)">
-          <h4>Reviews</h4>
-          <blockquote></blockquote>
-        </div>
-      </section>
-    </div>
-  </body>
-</html> -->
-
-
-
-<!-- <!DOCTYPE html>
-<html ng-app="gemStore">
-  <head>
-    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
-    <script type="text/javascript" src="angular.min.js"></script>
-    <script type="text/javascript" src="app.js"></script>
-  </head>
-  <body class="list-group" ng-controller="StoreController as store">
-    <header>
-      <h1 class="text-center">Flatlander Crafted Gems</h1>
-      <h2 class="text-center">– an Angular store –</h2>
-    </header>
-    <div class="list-group-item" ng-repeat="product in store.products">
-      <h3>
-        {{product.name}}
-        <em class="pull-right">{{product.price | currency}}</em>
-      </h3>
-
-      Image Gallery
-        <div class='gallery' ng-show="product.images.length" ng-controller="GalleryController as gallery">
-        notice the swapping of [gallery.current] for [0] here
-        <img ng-src="{{product.images[gallery.current]}}" />
-        <ul class="list-inline thumbs">
-          <li class="thumbnail" ng-repeat="image in product.images">
-            <img ng-src="{{image}}" />
-          </li>
-        </ul>
-      </div>
-
-      <section class="tab" ng-controller="TabController as tab">
-        <ul class="nav nav-pills">
-          <li ng-class="{ active: tab.isSet(1) }">
-            <a href ng-click="tab.setTab(1)">Description</a></li>
-          <li ng-class="{ active: tab.isSet(2) }">
-            <a href ng-click="tab.setTab(2)">Specs</a></li>
-          <li ng-class="{ active: tab.isSet(3) }">
-            <a href ng-click="tab.setTab(3)">Reviews</a></li>
-        </ul>
-        <div ng-show="tab.isSet(1)">
-          <h4>Description</h4>
-          <blockquote>{{product.description}}</blockquote>
-        </div>
-        <div ng-show="tab.isSet(2)">
-          <h4>Specs</h4>
-          <blockquote>Shine: {{product.shine}}</blockquote>
-        </div>
-        <div ng-show="tab.isSet(3)">
-          <h4>Reviews</h4>
-        </div>
-      </section>
-    </div>
-  </body>
-</html> -->
