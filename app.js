@@ -4,7 +4,7 @@
   // angular module has a name and dependencies
   var app = angular.module('store', [ ]);
 
-  // CamelCase important, use controller as part of name, controller attached inside app.
+  // CamelCase important, use controller as part of name, controller attached inside app. Looks like TitleCase is used for controllers
   // Controller has name and anonymous function parameters.
   app.controller('StoreController', function(){
     // define product as a property of the controller and assign gem to it
@@ -12,26 +12,28 @@
     this.products = gems;
   });
 
-  app.controller('PanelController', function(){
-    // pulled from ng-init in index.html to here
-    this.panel = 1;
-    // create a function expression
-    // pull out ng-click tab = x from index.html to here for efficiency
-    this.selectPanel = function(selectPanel){
-      this.panel = selectPanel;
-    };
-    // pull out the ng-class comparison for active tabs from index.html to here
-    this.isSelected = function(checkPanel){
-      return this.panel === checkPanel;
-    };
-  });
+  // // pulled into productPanels directive
+  // app.controller('PanelController', function(){
+  //   // pulled from ng-init in index.html to here
+  //   this.panel = 1;
+  //   // create a function expression
+  //   // pull out ng-click tab = x from index.html to here for efficiency
+  //   this.selectPanel = function(selectPanel){
+  //     this.panel = selectPanel;
+  //   };
+  //   // pull out the ng-class comparison for active tabs from index.html to here
+  //   this.isSelected = function(checkPanel){
+  //     return this.panel === checkPanel;
+  //   };
+  // });
 
-  app.controller('GalleryController', function(){
-    this.current = 0;
-    this.setCurrent = function(newGallery){
-      this.current = newGallery || 0;
-    };
-  });
+  // // pulled into productGallery directive
+  // app.controller('GalleryController', function(){
+  //   this.current = 0;
+  //   this.setCurrent = function(newGallery){
+  //     this.current = newGallery || 0;
+  //   };
+  // });
 
   app.controller('ReviewController', function(){
     // clear form
@@ -43,6 +45,51 @@
       this.review = {};
     }
   });
+
+  // define custom directive, use camelCase
+  app.directive('productTitle', function(){
+    return {
+      // restrict HTML element, HTML attribute
+      restrict: 'EA',
+      // note camelCase below
+      templateUrl: 'product-title.html'
+    };
+  });
+
+  app.directive('productPanels', function(){
+    return {
+      restrict: 'E',
+      templateUrl: 'product-panels.html',
+      // moved controller functionality into directive
+      // keep orig PanelController above until you test this
+      // or controller will break
+      controller: function(){
+        this.panel = 1;
+        this.selectPanel = function(selectPanel){
+          this.panel = selectPanel;
+        };
+        this.isSelected = function(checkPanel){
+          return this.panel === checkPanel;
+        };
+      },
+      controllerAs: 'panel'
+    };
+  });
+
+  app.directive('productGallery', function(){
+    return {
+      restrict: 'E',
+      templateUrl: 'product-gallery.html',
+      controller: function() {
+        this.current = 0;
+        this.setCurrent = function(imageNumber){
+        this.current = imageNumber || 0;
+      };
+      },
+      controllerAs: 'gallery'
+    };
+  });
+
 
   var gems = [{
     name: 'Azurite',

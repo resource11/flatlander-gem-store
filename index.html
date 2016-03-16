@@ -24,8 +24,20 @@
    </header>
   <div class="list-group">
     <div class="list-group-item" ng-repeat="product in store.products">
-      <h3>{{product.name}} <em class="pull-right">{{product.price | currency}}</em></h3>
+      <!-- pull out title and price into partial, use ng-include directive, which uses an ajax req to grab the file. note use of single quotes to pass in a string vs. a variable -->
+      <!-- <h3 ng-include="'product-title.html'"></h3> -->
 
+
+      <!-- pull this out to a custom directive. Allows you to write HTML that expresses the behavior of your app. Use dashes in custom directive name -->
+      <!-- don't use self-closing tag for custom tags, not compatible w all browsers -->
+
+      <!-- this is an element directive, use for UI widgets -->
+      <product-title></product-title>
+
+      <!-- this is an attribute directive, use for mixin behaviors, like tooltips -->
+      <!-- <h3 product-title></h3> -->
+
+      <!-- pulled into directive
       <div ng-controller="GalleryController as gallery"  ng-show="product.images.length">
         <div class="img-wrap">
           <img ng-src="{{product.images[0].full}}" />
@@ -35,8 +47,10 @@
             <img ng-src="{{image}}" />
           </li>
         </ul>
-      </div>
+      </div> -->
+      <product-gallery></product-gallery>
 
+<!--         pull this out into custom directive
         <section ng-controller="PanelController as panel">
           <ul class="nav nav-pills">
             <li ng-class="{active:panel.isSelected(1)}"><a href="" ng-click="panel.selectPanel(1)">Description</a></li>
@@ -44,7 +58,7 @@
             <li ng-class="{active:panel.isSelected(3)}"><a href="" ng-click="panel.selectPanel(3)">Reviews</a></li>
           </ul>
 
-          <!-- show if the tab === the value -->
+
           <div ng-show="panel.isSelected(1)">
             <h4>Description</h4>
             <p>{{product.description}}</p>
@@ -63,16 +77,16 @@
                 </blockquote>
               </li>
             </ul>
-            <!--  Review Form -->
+
             <form name="reviewForm" ng-controller="ReviewController as reviewCtrl" ng-submit="reviewForm.$valid && reviewCtrl.addReview(product)" novalidate>
-              <!--  Live Preview -->
+
               <blockquote>
                 <strong>{{reviewCtrl.review.stars}} Stars</strong>
                 {{reviewCtrl.review.body}}
                 <cite class="clearfix">—{{reviewCtrl.review.author}}</cite>
               </blockquote>
 
-              <!--  Review Form -->
+
               <h4>Submit a Review</h4>
               <fieldset class="form-group">
                 <select ng-model="reviewCtrl.review.stars" class="form-control" ng-options="stars for stars in [5,4,3,2,1]"  title="Stars" required>
@@ -85,14 +99,20 @@
               <fieldset class="form-group">
                 <input ng-model="reviewCtrl.review.author" type="email" class="form-control" placeholder="jimmyDean@example.org" title="Email" required/>
               </fieldset>
-              <!-- test for validation -->
+
               <div>Review form is {{reviewForm.$valid}}</div>
               <fieldset class="form-group">
                 <input type="submit" class="btn btn-primary pull-right" value="Submit Review" />
               </fieldset>
             </form>
           </div>
-        </section>
+        </section> -->
+
+        <!-- <product-panels ng-controller="PanelController as panel">
+        </product-panels> -->
+
+        <!-- move controller into directive -->
+        <product-panels></product-panels>
     </div>
   </div>
 
